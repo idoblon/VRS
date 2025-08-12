@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LogIn } from "lucide-react";
+import { LogIn, User, Building, Shield } from "lucide-react";
 import { User } from "../../types";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
@@ -13,26 +13,27 @@ interface LoginPageProps {
 export function LoginPage({ onLogin, onShowSignup }: LoginPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [selectedRole, setSelectedRole] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!selectedRole) {
+      setError("Please select your role");
+      return;
+    }
+    
     setIsLoading(true);
     setError("");
 
     try {
-      // const response = await fetch('http://localhost:3000/api/auth/login', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify({ email, password })
-      // });
 
       const response = await axiosInstance.post("/api/auth/login", {
         email,
         password,
+        role: selectedRole.toUpperCase(),
       });
 
       const data = response.data;
@@ -56,6 +57,11 @@ export function LoginPage({ onLogin, onShowSignup }: LoginPageProps) {
     }
   };
 
+  const roleOptions = [
+    { value: "admin", label: "Admin", icon: Shield, color: "red" },
+    { value: "vendor", label: "Vendor", icon: User, color: "blue" },
+    { value: "center", label: "Distribution Center", icon: Building, color: "green" }
+  ];
   const handleImageError = (
     e: React.SyntheticEvent<HTMLImageElement, Event>
   ) => {
@@ -76,10 +82,50 @@ export function LoginPage({ onLogin, onShowSignup }: LoginPageProps) {
               onError={handleImageError}
             />
           </div>
+          <h1 className="text-3xl font-bold text-gray-900 mt-4 mb-2">
+            Welcome to Vendor Request System
+          </h1>
+          <p className="text-gray-600">Sign in to access your dashboard</p>
         </div>
 
         <Card className="p-8 shadow-xl border-0 bg-white/95 backdrop-blur-sm">
           <form onSubmit={handleLogin} className="space-y-6">
+            {/* Role Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Select Your Role *
+              </label>
+              <div className="grid grid-cols-1 gap-3">
+                {roleOptions.map((role) => {
+                  const Icon = role.icon;
+                  return (
+                    <button
+                      key={role.value}
+                      type="button"
+                      onClick={() => setSelectedRole(role.value)}
+                      className={`flex items-center p-3 border-2 rounded-lg transition-all ${
+                        selectedRole === role.value
+                          ? `border-${role.color}-500 bg-${role.color}-50`
+                          : "border-gray-200 hover:border-gray-300 bg-white"
+                      }`}
+                    >
+                      <Icon className={`h-5 w-5 mr-3 ${
+                        selectedRole === role.value 
+                          ? `text-${role.color}-600` 
+                          : "text-gray-400"
+                      }`} />
+                      <span className={`font-medium ${
+                        selectedRole === role.value 
+                          ? `text-${role.color}-800` 
+                          : "text-gray-700"
+                      }`}>
+                        {role.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Email Address

@@ -7,6 +7,8 @@ import {
 } from "react-router-dom";
 import { LoginPage } from "./components/auth/LoginPage";
 import { SignupPage } from "./components/auth/SignupPage";
+import { RoleSelectionPage } from "./components/auth/RoleSelectionPage";
+import { CenterSignupPage } from "./components/auth/CenterSignupPage";
 import { SignupSuccessPage } from "./components/auth/SignupSuccessPage";
 import { VendorDashboard } from "./components/dashboards/VendorDashboard";
 import { CenterDashboard } from "./components/dashboards/CenterDashboard";
@@ -15,7 +17,7 @@ import { PaymentDemo } from "./components/payment/PaymentDemo";
 import { Toaster } from "./components/ui/Toaster";
 import { User, UserRole } from "./types";
 
-type AuthView = "login" | "signup" | "signup-success";
+type AuthView = "login" | "role-selection" | "vendor-signup" | "center-signup" | "signup-success";
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -95,13 +97,35 @@ const App = () => {
           return (
             <LoginPage
               onLogin={handleLogin}
-              onShowSignup={() => setAuthView("signup")}
+              onShowSignup={() => setAuthView("role-selection")}
             />
           );
-        case "signup":
+        case "role-selection":
+          return (
+            <RoleSelectionPage
+              onShowLogin={() => setAuthView("login")}
+              onSelectRole={(role) => {
+                if (role === 'vendor') {
+                  setAuthView("vendor-signup");
+                } else if (role === 'center') {
+                  setAuthView("center-signup");
+                }
+              }}
+            />
+          );
+        case "vendor-signup":
           return (
             <SignupPage
               onShowLogin={() => setAuthView("login")}
+              onShowRoleSelection={() => setAuthView("role-selection")}
+              onSignupSuccess={() => setAuthView("signup-success")}
+            />
+          );
+        case "center-signup":
+          return (
+            <CenterSignupPage
+              onShowLogin={() => setAuthView("login")}
+              onShowRoleSelection={() => setAuthView("role-selection")}
               onSignupSuccess={() => setAuthView("signup-success")}
             />
           );
@@ -111,7 +135,7 @@ const App = () => {
           return (
             <LoginPage
               onLogin={handleLogin}
-              onShowSignup={() => setAuthView("signup")}
+              onShowSignup={() => setAuthView("role-selection")}
             />
           );
       }

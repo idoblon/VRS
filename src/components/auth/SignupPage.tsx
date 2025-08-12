@@ -7,6 +7,7 @@ import axiosInstance from "../../utils/axios";
 
 interface SignupPageProps {
   onShowLogin: () => void;
+  onShowRoleSelection: () => void;
   onSignupSuccess: () => void;
 }
 
@@ -34,7 +35,7 @@ interface SignupFormData {
   images: File[];
 }
 
-export function SignupPage({ onShowLogin, onSignupSuccess }: SignupPageProps) {
+export function SignupPage({ onShowLogin, onShowRoleSelection, onSignupSuccess }: SignupPageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<SignupFormData>({
     vendorName: "",
@@ -247,11 +248,11 @@ export function SignupPage({ onShowLogin, onSignupSuccess }: SignupPageProps) {
         <Card className="p-8 shadow-xl border-0 bg-white/95 backdrop-blur-sm">
           <div className="flex items-center mb-6">
             <button
-              onClick={onShowLogin}
+              onClick={onShowRoleSelection}
               className="flex items-center text-orange-600 hover:text-orange-500 font-medium transition-colors"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Sign In
+              Back to Role Selection
             </button>
           </div>
 
@@ -709,7 +710,7 @@ export function SignupPage({ onShowLogin, onSignupSuccess }: SignupPageProps) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={onShowLogin}
+                onClick={onShowRoleSelection}
                 className="px-8 border-orange-300 text-orange-600 hover:bg-orange-50"
               >
                 Cancel
